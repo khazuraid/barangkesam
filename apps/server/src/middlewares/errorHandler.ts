@@ -1,39 +1,46 @@
-import type { ErrorRequestHandler } from 'express';
-import { ZodError } from 'zod';
+import type { NextFunction, Request, Response } from 'express';
 
 export class AppError extends Error {
   constructor(
     public statusCode: number,
-    message: string,
+    public message: string,
     public code?: string,
   ) {
     super(message);
     this.name = 'AppError';
+    Error.captureStackTrace(this, this.constructor);
   }
 }
 
-export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  if (err instanceof ZodError) {
-    res.status(400).json({
-      success: false,
-      error: 'Validasi gagal',
-      details: err.flatten().fieldErrors,
-    });
-    return;
-  }
+export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
+  // Selalu cetak error ke console agar bisa dilihat di log Coolify
+  console.error('🔥 [Error Handler]:', {
+    message: err.message,
+    stack: err.stack,
+    statusCode: err.statusCode || 500,
+    code: err.code,
+  });
 
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({
+    return res.status(err.statusCode).json({
       success: false,
       error: err.message,
       code: err.code,
     });
-    return;
   }
 
-  console.error('Unhandled error:', err);
+  // Handle Prisma error
+  if (err.code?.startsWith('P')) {
+    return res.status(400).json({
+      success: false,
+      error: 'Kesalahan database (Prisma)',
+      detail: err.message,
+    });
+  }
+
+  // Fallback untuk error tidak terduga
   res.status(500).json({
     success: false,
-    error: 'Terjadi kesalahan pada server',
+    error: 'Terjadi kesalahan internal pada server',
   });
 };
