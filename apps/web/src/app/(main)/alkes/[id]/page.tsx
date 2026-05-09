@@ -948,6 +948,43 @@ export default function AlkesDetailPage() {
                 <VerificationTimeline alkesId={id} />
               </div>
             </section>
+
+            {/* QR Code Section */}
+            {qrUrl && (
+              <section className={sectionCls}>
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <QrCode className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">QR Code Aset</h2>
+                    <p className="text-sm font-medium text-slate-500">Scan untuk akses cepat</p>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-48 h-48 bg-white border-2 border-slate-100 rounded-2xl p-3 shadow-sm flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}`}
+                      alt="QR Code"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="text-center w-full">
+                    <p className="text-[10px] font-mono text-slate-400 truncate mb-3">{qrUrl}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleDownloadQr}
+                      className="w-full h-11 rounded-xl text-xs font-bold gap-2 border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download QR Code
+                    </Button>
+                  </div>
+                </div>
+              </section>
+            )}
           </aside>
         </div>
       </div>
@@ -1280,39 +1317,6 @@ export default function AlkesDetailPage() {
                   )}
                 </div>
 
-                {/* Section: QR Code */}
-                {qrUrl && (
-                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                    <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-                      <QrCode className="w-4 h-4 text-indigo-600" />
-                      <h3 className="font-bold text-slate-900 text-sm tracking-wide uppercase">QR Code</h3>
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <div className="w-24 h-24 shrink-0 bg-white border border-slate-200 rounded-xl p-2 shadow-sm flex items-center justify-center">
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`}
-                          alt="QR Code"
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-mono text-slate-500 truncate mb-2">{qrUrl}</p>
-                        {qrWarnLocal && (
-                          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1.5 mb-2">⚠ URL masih localhost, ubah PUBLIC_URL di .env.local</p>
-                        )}
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={handleDownloadQr}
-                          className="h-9 px-4 rounded-xl text-xs font-semibold gap-2"
-                        >
-                          <Download className="w-3.5 h-3.5" />
-                          Download QR Code
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </>
             )}
           </div>
