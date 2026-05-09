@@ -29,6 +29,9 @@ import usersRoute from './modules/users/users.route.js';
 const app = express();
 const httpServer = createServer(app);
 
+// Beritahu Express bahwa kita di balik proxy (Coolify/Traefik)
+app.set('trust proxy', 1);
+
 // ─── Socket.IO ────────────────────────────────────────────────────────────────
 initSocket(httpServer);
 
