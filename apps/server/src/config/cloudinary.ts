@@ -17,7 +17,7 @@ export const USE_LOCAL_STORAGE =
   PLACEHOLDER_VALUES.has(env.CLOUDINARY_API_SECRET);
 
 export const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads');
-const PUBLIC_BASE = `http://localhost:${env.PORT}/uploads`;
+const PUBLIC_BASE = `${env.API_URL}/uploads`;
 
 if (USE_LOCAL_STORAGE) {
   console.warn('⚠️  Cloudinary belum dikonfigurasi — menggunakan penyimpanan lokal di ./uploads/');

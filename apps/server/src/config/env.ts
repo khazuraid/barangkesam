@@ -13,6 +13,7 @@ const EnvSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().default(''),
   CLOUDINARY_API_KEY: z.string().default(''),
   CLOUDINARY_API_SECRET: z.string().default(''),
+  API_URL: z.string().default('http://localhost:3001'),
   /**
    * Daftar origin yang diizinkan oleh CORS. Dapat diisi:
    *  - satu origin: `http://localhost:3000`
