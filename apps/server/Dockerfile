@@ -14,11 +14,13 @@ COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm install
 
 COPY --from=builder /app/out/full/ .
+# Generate Prisma Client sebelum build
+RUN npx turbo run db:generate --filter=@repo/server
 RUN npx turbo run build --filter=@repo/server
 
 FROM base AS runner
 WORKDIR /app
 COPY --from=installer /app .
 EXPOSE 3001
-# Jalankan migrasi dan start
+# Jalankan migrasi (opsional) dan start
 CMD ["node", "apps/server/dist/app.js"]
