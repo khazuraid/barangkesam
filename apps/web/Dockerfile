@@ -19,6 +19,8 @@ RUN npx turbo run build --filter=web
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
 COPY --from=installer /app/apps/web/next.config.ts ./
 COPY --from=installer /app/apps/web/public ./apps/web/public
 COPY --from=installer /app/apps/web/.next/standalone ./
