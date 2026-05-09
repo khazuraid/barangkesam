@@ -1,5 +1,5 @@
 FROM node:20-slim AS base
-RUN corepack enable
+RUN corepack enable && apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 FROM base AS builder
 WORKDIR /app
