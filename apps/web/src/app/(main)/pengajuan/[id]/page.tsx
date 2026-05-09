@@ -310,21 +310,44 @@ export default function PengajuanDetailPage() {
                     </div>
                   )}
                   {data.qr_code && (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest flex items-center gap-2">
-                        <Package className="w-4 h-4" /> QR Code Inventaris
+                        <CheckCircle2 className="w-4 h-4" /> QR Code Inventaris
                       </div>
-                      <div className="bg-white p-8 rounded-[1.5rem] border border-emerald-200/60 shadow-sm flex flex-col items-center justify-center text-center space-y-4 h-[calc(100%-2rem)] min-h-[200px]">
-                        <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 shadow-inner">
-                          <LayoutGrid className="w-12 h-12 text-emerald-500" />
+                      <div className="bg-white p-6 rounded-[2rem] border border-emerald-200/60 shadow-sm flex flex-col items-center justify-center text-center space-y-5">
+                        <div className="p-3 bg-white border-2 border-emerald-50 rounded-2xl shadow-sm">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(data.qr_code)}`}
+                            alt="QR Code"
+                            className="w-32 h-32 object-contain"
+                          />
                         </div>
-                        <div>
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                        <div className="w-full">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                             Kode Seri / Identifikasi
                           </p>
-                          <p className="font-mono font-black text-xl text-emerald-800 bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-xl shadow-sm">
+                          <p className="font-mono font-black text-lg text-emerald-800 bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-xl mb-4">
                             {data.qr_code}
                           </p>
+                          <Button
+                            variant="outline"
+                            className="w-full h-10 rounded-xl text-xs font-bold gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-all"
+                            onClick={async () => {
+                              const url = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(data.qr_code || '')}`;
+                              const res = await fetch(url);
+                              const blob = await res.blob();
+                              const downloadUrl = window.URL.createObjectURL(blob);
+                              const a = document.createElement('a');
+                              a.href = downloadUrl;
+                              a.download = `QR-${data.qr_code}.png`;
+                              document.body.appendChild(a);
+                              a.click();
+                              a.remove();
+                            }}
+                          >
+                            <Info className="w-4 h-4" /> Simpan QR Code
+                          </Button>
                         </div>
                       </div>
                     </div>
