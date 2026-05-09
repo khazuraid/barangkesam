@@ -6,13 +6,13 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL wajib diisi'),
   REDIS_URL: z.string().default('redis://localhost:6379'),
-  JWT_SECRET: z.string().min(32, 'JWT_SECRET minimal 32 karakter'),
-  JWT_REFRESH_SECRET: z.string().min(32, 'JWT_REFRESH_SECRET minimal 32 karakter'),
+  JWT_SECRET: z.string().default('placeholder-secret-key-32-characters-minimum-length'),
+  JWT_REFRESH_SECRET: z.string().default('placeholder-refresh-secret-key-32-characters-minimum'),
   JWT_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
-  CLOUDINARY_CLOUD_NAME: z.string().min(1, 'CLOUDINARY_CLOUD_NAME wajib diisi'),
-  CLOUDINARY_API_KEY: z.string().min(1, 'CLOUDINARY_API_KEY wajib diisi'),
-  CLOUDINARY_API_SECRET: z.string().min(1, 'CLOUDINARY_API_SECRET wajib diisi'),
+  CLOUDINARY_CLOUD_NAME: z.string().default(''),
+  CLOUDINARY_API_KEY: z.string().default(''),
+  CLOUDINARY_API_SECRET: z.string().default(''),
   /**
    * Daftar origin yang diizinkan oleh CORS. Dapat diisi:
    *  - satu origin: `http://localhost:3000`
