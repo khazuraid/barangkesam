@@ -14,6 +14,7 @@ COPY --from=builder /app/out/package-lock.json ./package-lock.json
 RUN npm install
 
 COPY --from=builder /app/out/full/ .
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
 # Generate Prisma Client sebelum build
 RUN npx turbo run db:generate --filter=@repo/server
 RUN npx turbo run build --filter=@repo/server
