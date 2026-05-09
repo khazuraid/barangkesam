@@ -56,7 +56,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
       if (parent.level >= body.level)
         throw new AppError(400, 'Level harus lebih besar dari kelompok induk');
     }
-    const group = await prisma.alkesGroup.create({ data: body });
+    const group = await prisma.alkesGroup.create({ data: body as any });
     await delCache(CacheKeys.alkesGroups());
     res.status(201).json({ success: true, data: group });
   } catch (err) {
@@ -83,7 +83,7 @@ export async function getById(req: Request, res: Response, next: NextFunction) {
 export async function update(req: Request, res: Response, next: NextFunction) {
   try {
     const body = UpdateAlkesGroupSchema.parse(req.body);
-    const group = await prisma.alkesGroup.update({ where: { id: req.params.id }, data: body });
+    const group = await prisma.alkesGroup.update({ where: { id: req.params.id }, data: body as any });
     await delCache(CacheKeys.alkesGroups());
     res.json({ success: true, data: group });
   } catch (err) {

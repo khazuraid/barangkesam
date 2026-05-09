@@ -68,7 +68,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
         ...body,
         assigned_room_id: body.role === 'ADMIN' ? null : body.assigned_room_id,
         password: hashed,
-      },
+      } as any,
       select: {
         id: true,
         name: true,
@@ -158,7 +158,7 @@ export async function update(req: Request, res: Response, next: NextFunction) {
 
     const user = await prisma.user.update({
       where: { id },
-      data,
+      data: data as any,
       select: {
         id: true,
         name: true,

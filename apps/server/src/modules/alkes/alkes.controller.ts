@@ -220,7 +220,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
       verified_at: isAdmin ? new Date() : null,
     } as Prisma.AlkesUncheckedCreateInput;
 
-    const alkes = await prisma.alkes.create({ data: createData });
+    const alkes = await prisma.alkes.create({ data: createData as any });
     await delCachePattern('alkes:list*');
     await delCache(CacheKeys.dashboardStats());
 
@@ -747,7 +747,7 @@ export async function update(req: Request, res: Response, next: NextFunction) {
     const alkes = await prisma.alkes
       .update({
         where: { id: req.params.id },
-        data: updateData,
+        data: updateData as any,
       })
       .catch((err) => handlePrismaError(err, 'Alkes'));
 
