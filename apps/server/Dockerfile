@@ -15,7 +15,10 @@ RUN npm install
 
 COPY --from=builder /app/out/full/ .
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
-# Generate Prisma Client sebelum start
+# Pastikan folder uploads ada dan bisa ditulisi
+RUN mkdir -p apps/server/uploads
+
+# Generate Prisma Client specifically for the target OS
 RUN npx turbo run db:generate --filter=@repo/server
 
 FROM base AS runner
