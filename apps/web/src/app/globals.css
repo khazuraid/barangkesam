@@ -1,0 +1,250 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   CLINICAL PRECISION DESIGN SYSTEM
+   ============================================================ */
+
+@theme inline {
+  /* Font Families */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Core Colors - Clinical Precision Palette */
+  --color-background: #f8f9ff;
+  --color-foreground: #0b1c30;
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  --color-surface-variant: #d3e4fe;
+
+  /* On Colors */
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #434656;
+  --color-on-background: #0b1c30;
+
+  /* Primary - Electric Blue */
+  --color-primary: #003ec7;
+  --color-primary-foreground: #ffffff;
+  --color-primary-container: #0052ff;
+  --color-on-primary-container: #dfe3ff;
+  --color-primary-fixed: #dde1ff;
+  --color-primary-fixed-dim: #b7c4ff;
+  --color-on-primary-fixed: #001452;
+  --color-on-primary-fixed-variant: #0038b6;
+  --color-inverse-primary: #b7c4ff;
+  --color-surface-tint: #004ced;
+
+  /* Secondary - Fresh Mint Green */
+  --color-secondary: #006c49;
+  --color-secondary-foreground: #ffffff;
+  --color-secondary-container: #6cf8bb;
+  --color-on-secondary-container: #00714d;
+  --color-secondary-fixed: #6ffbbe;
+  --color-secondary-fixed-dim: #4edea3;
+  --color-on-secondary-fixed: #002113;
+  --color-on-secondary-fixed-variant: #005236;
+
+  /* Tertiary - Slate Gray */
+  --color-tertiary: #464f54;
+  --color-tertiary-foreground: #ffffff;
+  --color-tertiary-container: #5e676c;
+  --color-on-tertiary-container: #dce5eb;
+  --color-tertiary-fixed: #dbe4ea;
+  --color-tertiary-fixed-dim: #bfc8ce;
+  --color-on-tertiary-fixed: #141d21;
+  --color-on-tertiary-fixed-variant: #3f484d;
+
+  /* Error - Red */
+  --color-error: #ba1a1a;
+  --color-error-foreground: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-destructive: #ba1a1a;
+
+  /* Outline */
+  --color-outline: #737688;
+  --color-outline-variant: #c3c5d9;
+
+  /* Inverse */
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+
+  /* Shadcn Mapping */
+  --color-card: #ffffff;
+  --color-card-foreground: #0b1c30;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0b1c30;
+  --color-muted: #e5eeff;
+  --color-muted-foreground: #434656;
+  --color-accent: #e5eeff;
+  --color-accent-foreground: #0b1c30;
+  --color-border: #c3c5d9;
+  --color-input: #c3c5d9;
+  --color-ring: #004ced;
+
+  /* Sidebar Colors */
+  --color-sidebar: #ffffff;
+  --color-sidebar-foreground: #0b1c30;
+  --color-sidebar-primary: #003ec7;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: #eff4ff;
+  --color-sidebar-accent-foreground: #003ec7;
+  --color-sidebar-border: #c3c5d9;
+  --color-sidebar-ring: #004ced;
+
+  /* Chart Colors */
+  --color-chart-1: #003ec7;
+  --color-chart-2: #006c49;
+  --color-chart-3: #464f54;
+  --color-chart-4: #0052ff;
+  --color-chart-5: #ba1a1a;
+
+  /* Spacing */
+  --spacing-unit: 8px;
+  --spacing-container-padding: 32px;
+  --spacing-gutter: 24px;
+  --spacing-stack-sm: 12px;
+  --spacing-stack-md: 24px;
+  --spacing-stack-lg: 48px;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  --radius: 0.5rem;
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+.dark {
+  --color-background: #0b1c30;
+  --color-foreground: #f8f9ff;
+  --color-surface: #213145;
+  --color-surface-dim: #0b1c30;
+  --color-surface-bright: #213145;
+  --color-surface-container-lowest: #0b1c30;
+  --color-surface-container-low: #213145;
+  --color-surface-container: #213145;
+  --color-surface-container-high: #434656;
+  --color-surface-container-highest: #464f54;
+  --color-surface-variant: #434656;
+
+  --color-on-surface: #f8f9ff;
+  --color-on-surface-variant: #cbdbf5;
+  --color-on-background: #f8f9ff;
+
+  --color-card: #213145;
+  --color-card-foreground: #f8f9ff;
+  --color-popover: #213145;
+  --color-popover-foreground: #f8f9ff;
+  --color-muted: #434656;
+  --color-muted-foreground: #cbdbf5;
+  --color-accent: #434656;
+  --color-accent-foreground: #f8f9ff;
+  --color-border: #464f54;
+  --color-input: #464f54;
+  --color-ring: #b7c4ff;
+
+  --color-sidebar: #213145;
+  --color-sidebar-foreground: #f8f9ff;
+  --color-sidebar-primary: #b7c4ff;
+  --color-sidebar-primary-foreground: #0b1c30;
+  --color-sidebar-accent: #434656;
+  --color-sidebar-accent-foreground: #f8f9ff;
+  --color-sidebar-border: #464f54;
+  --color-sidebar-ring: #b7c4ff;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  }
+  html {
+    @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+/* ============================================================
+   GLASS CARD UTILITY
+   ============================================================ */
+
+@layer components {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .glass-card {
+    background: rgba(33, 49, 69, 0.7);
+    border: 1px solid rgba(70, 79, 84, 0.5);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid #e5eeff;
+    box-shadow: 0 10px 30px -10px rgba(0, 62, 199, 0.05);
+  }
+
+  .dark .glass-panel {
+    background: rgba(33, 49, 69, 0.9);
+    border: 1px solid #464f54;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Status Chip Variants */
+  .status-chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-medium text-xs;
+  }
+
+  .status-chip--baik {
+    @apply bg-secondary-container/20 text-secondary border border-secondary-container/50;
+  }
+
+  .status-chip--rusak {
+    @apply bg-error-container/30 text-error border border-error-container/50;
+  }
+
+  .status-chip--perawatan {
+    @apply bg-surface-variant text-primary border border-primary-fixed-dim/50;
+  }
+
+  .status-chip--tidak-beroperasi {
+    @apply bg-tertiary-fixed/40 text-on-tertiary-fixed border border-tertiary-fixed-dim/50;
+  }
+}

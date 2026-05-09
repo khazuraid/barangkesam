@@ -1,0 +1,318 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  STAFF
+}
+
+enum AlkesAda {
+  Ya
+  Tidak
+}
+
+enum AlkesBerfungsi {
+  Baik
+  Rusak
+  tdk_beroperasi @map("tdk beroperasi")
+  tdk_berfungsi  @map("tdk berfungsi")
+}
+
+enum AlkesPendanaan {
+  APBN
+  APBD
+  Hibah
+  KSO
+  BLU
+  JKLN
+}
+
+enum ImportType {
+  ALKES
+}
+
+enum ImportStatus {
+  PENDING
+  PROCESSING
+  DONE
+  FAIL
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ERROR
+  SUCCESS
+}
+
+enum VerificationStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  REVISED
+}
+
+enum RequestType {
+  NEW_EQUIPMENT
+  REPLACEMENT
+  ADDITIONAL
+}
+
+enum RequestStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  FULFILLED
+}
+
+enum LogAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  IMPORT
+  EXPORT
+  UPLOAD
+  TOGGLE_ACTIVE
+  RESET_PASSWORD
+  SUBMIT
+  APPROVE
+  REJECT
+  REQUEST_CREATE
+  REQUEST_SUBMIT
+  REQUEST_APPROVE
+  REQUEST_REJECT
+  REQUEST_FULFILL
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id               String    @id @default(uuid())
+  name             String    @db.VarChar(100)
+  email            String    @unique @db.VarChar(100)
+  password         String
+  role             UserRole  @default(STAFF)
+  avatar_url       String?
+  is_active        Boolean   @default(true)
+  assigned_room_id String?
+  last_login_at    DateTime?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+
+  assigned_room     AlkesGroup?        @relation("AssignedRoom", fields: [assigned_room_id], references: [id])
+  alkes             Alkes[]            @relation("AlkesCreator")
+  verified_alkes    Alkes[]            @relation("AlkesVerifier")
+  import_logs       ImportLog[]
+  notifications     Notification[]
+  alkes_images      AlkesImage[]
+  activity_logs     ActivityLog[]
+  requests_made     EquipmentRequest[] @relation("RequestRequester")
+  requests_reviewed EquipmentRequest[] @relation("RequestReviewer")
+  verification_logs VerificationLog[]
+
+  @@index([assigned_room_id])
+  @@map("users")
+}
+
+model AlkesGroup {
+  id         String   @id @default(uuid())
+  level      Int
+  name       String   @db.VarChar(200)
+  parent_id  String?
+  created_at DateTime @default(now())
+
+  parent             AlkesGroup?        @relation("AlkesGroupTree", fields: [parent_id], references: [id])
+  children           AlkesGroup[]       @relation("AlkesGroupTree")
+  alkes              Alkes[]
+  equipment_requests EquipmentRequest[]
+  assigned_staffs    User[]             @relation("AssignedRoom")
+
+  @@map("alkes_groups")
+}
+
+model Alkes {
+  id                  String             @id @default(uuid())
+  group_id            String?
+  mark                String             @default("") @db.VarChar(20)
+  kode_alat           String             @unique @db.VarChar(50)
+  nama_alat           String             @db.VarChar(300)
+  ada                 AlkesAda           @default(Tidak)
+  no_seri             String?            @db.VarChar(100)
+  merk                String?            @db.VarChar(100)
+  type                String?            @db.VarChar(100)
+  thn_pengadaan       Int?
+  berfungsi           AlkesBerfungsi     @default(Rusak)
+  harga               Decimal?           @db.Decimal(15, 2)
+  pendanaan           AlkesPendanaan?
+  distributor         String?            @db.VarChar(200)
+  akl_akd             String?            @db.VarChar(100)
+  keterangan          String?
+  image_url           String?
+  created_by          String
+  verification_status VerificationStatus @default(DRAFT)
+  verified_by         String?
+  verification_note   String?
+  verified_at         DateTime?
+  rejection_reason    String?
+  submitted_at        DateTime?
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
+
+  group                   AlkesGroup?        @relation(fields: [group_id], references: [id])
+  creator                 User               @relation("AlkesCreator", fields: [created_by], references: [id])
+  verifier                User?              @relation("AlkesVerifier", fields: [verified_by], references: [id])
+  images                  AlkesImage[]
+  fulfilled_from_requests EquipmentRequest[] @relation("RequestFulfillment")
+
+  @@index([group_id])
+  @@index([berfungsi])
+  @@index([no_seri])
+  @@index([verification_status])
+  @@map("alkes")
+}
+
+model AlkesImage {
+  id          String   @id @default(uuid())
+  alkes_id    String
+  url         String
+  public_id   String   @db.VarChar(200)
+  caption     String?  @db.VarChar(200)
+  is_primary  Boolean  @default(false)
+  urutan      Int      @default(0)
+  uploaded_by String
+  created_at  DateTime @default(now())
+
+  alkes    Alkes @relation(fields: [alkes_id], references: [id], onDelete: Cascade)
+  uploader User  @relation(fields: [uploaded_by], references: [id])
+
+  @@index([alkes_id])
+  @@map("alkes_images")
+}
+
+model ImportLog {
+  id           String       @id @default(uuid())
+  type         ImportType
+  filename     String       @db.VarChar(200)
+  total_rows   Int          @default(0)
+  success_rows Int          @default(0)
+  failed_rows  Int          @default(0)
+  error_detail Json         @default("[]")
+  status       ImportStatus @default(PENDING)
+  created_by   String
+  created_at   DateTime     @default(now())
+
+  creator User @relation(fields: [created_by], references: [id])
+
+  @@index([status])
+  @@map("import_logs")
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  user_id    String
+  title      String           @db.VarChar(200)
+  message    String
+  type       NotificationType @default(INFO)
+  is_read    Boolean          @default(false)
+  link       String?
+  created_at DateTime         @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([is_read])
+  @@map("notifications")
+}
+
+model EquipmentRequest {
+  id                 String          @id @default(uuid())
+  request_no         String          @unique @db.VarChar(30)
+  requested_by       String
+  type               RequestType
+  status             RequestStatus   @default(DRAFT)
+  nama_alat          String          @db.VarChar(300)
+  group_id           String?
+  merk               String?         @db.VarChar(100)
+  type_alat          String?         @db.VarChar(100)
+  quantity           Int             @default(1)
+  estimated_price    Decimal?        @db.Decimal(15, 2)
+  pendanaan_usulan   AlkesPendanaan?
+  justifikasi        String
+  spesifikasi        String?
+  attachment_url     String?
+  procurement_photo_url String?
+  qr_code            String?
+  submitted_at       DateTime?
+  reviewed_by        String?
+  reviewed_at        DateTime?
+  rejection_reason   String?
+  fulfilled_alkes_id String?         @unique
+  fulfilled_at       DateTime?
+  created_at         DateTime        @default(now())
+  updated_at         DateTime        @updatedAt
+
+  requester         User              @relation("RequestRequester", fields: [requested_by], references: [id])
+  reviewer          User?             @relation("RequestReviewer", fields: [reviewed_by], references: [id])
+  group             AlkesGroup?       @relation(fields: [group_id], references: [id])
+  fulfilled_alkes   Alkes?            @relation("RequestFulfillment", fields: [fulfilled_alkes_id], references: [id])
+  verification_logs VerificationLog[]
+
+  @@index([status])
+  @@index([requested_by])
+  @@map("equipment_requests")
+}
+
+model VerificationLog {
+  id          String   @id @default(uuid())
+  entity_type String   @db.VarChar(30)
+  entity_id   String   @db.VarChar(100)
+  from_status String   @db.VarChar(20)
+  to_status   String   @db.VarChar(20)
+  actor_id    String
+  note        String?
+  metadata    Json?
+  created_at  DateTime @default(now())
+
+  actor   User              @relation(fields: [actor_id], references: [id])
+  request EquipmentRequest? @relation(fields: [entity_id], references: [id])
+
+  @@index([entity_type, entity_id])
+  @@index([actor_id])
+  @@index([created_at])
+  @@map("verification_logs")
+}
+
+model ActivityLog {
+  id          String    @id @default(uuid())
+  user_id     String
+  action      LogAction
+  entity      String    @db.VarChar(50)
+  entity_id   String?   @db.VarChar(100)
+  description String    @db.VarChar(500)
+  metadata    Json?
+  ip_address  String?   @db.VarChar(45)
+  user_agent  String?   @db.VarChar(300)
+  created_at  DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@index([entity, entity_id])
+  @@index([action])
+  @@index([created_at])
+  @@map("activity_logs")
+}
