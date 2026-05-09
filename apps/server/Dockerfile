@@ -15,13 +15,12 @@ RUN npm install
 
 COPY --from=builder /app/out/full/ .
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
-# Generate Prisma Client sebelum build
+# Generate Prisma Client sebelum start
 RUN npx turbo run db:generate --filter=@repo/server
-RUN npx turbo run build --filter=@repo/server
 
 FROM base AS runner
 WORKDIR /app
 COPY --from=installer /app .
 EXPOSE 3001
-# Jalankan migrasi (opsional) dan start
-CMD ["node", "apps/server/dist/app.js"]
+# Jalankan langsung dari source menggunakan tsx agar monorepo terhubung dengan benar
+CMD ["npx", "tsx", "apps/server/src/app.ts"]
