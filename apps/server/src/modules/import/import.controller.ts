@@ -9,21 +9,13 @@ import { delCachePattern } from '../../config/redis.js';
 import { AppError } from '../../middlewares/errorHandler.js';
 import { logActivity } from '../../shared/utils/activityLogger.js';
 import { parseAlkesExcel } from '../../shared/utils/excelParser.js';
+import { emitToUser, getIO } from '../../sockets/index.js';
 
 const ImportBodySchema = z.object({
   group_id: z.string().uuid('group_id harus UUID valid').optional().nullable(),
   group_mapping: z.string().optional(), // JSON string: { "Nama Kit": "id-klaster" }
 });
 
-async function getIo() {
-  const { getIO } = await import('../../sockets/index.js');
-  return getIO();
-}
-
-async function emitToUser(userId: string, event: string, data: unknown) {
-  const { emitToUser: emit } = await import('../../sockets/index.js');
-  emit(userId, event, data);
-}
 
 async function findOrCreateAlkesGroup(
   name: string,
@@ -113,7 +105,7 @@ export async function importAlkes(req: Request, res: Response, next: NextFunctio
       } as Prisma.ImportLogUncheckedCreateInput,
     });
 
-    const io = await getIo();
+    const io = getIO();
     io.emit('import:progress', { log_id: log.id, processed: 0, total: 0, pct: 0 });
 
     let rows, parseErrors;
@@ -241,8 +233,12 @@ export async function importAlkes(req: Request, res: Response, next: NextFunctio
       link: null,
     });
 
-    await delCachePattern('alkes:*');
-    await delCachePattern('dashboard:*');
+    try {
+      await delCachePattern('alkes:*');
+      await delCachePattern('dashboard:*');
+    } catch (cacheErr) {
+      console.warn('⚠️ Gagal menghapus cache, tapi import tetap lanjut:', cacheErr);
+    }
 
     if (req.user?.userId) {
       logActivity({
